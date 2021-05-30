@@ -1,6 +1,6 @@
 # Horiken_2021
 
-事前情報ありの環境において，ゴールを目指しながら各経由地を巡回し，予め指定した交差点・探索エリアで必要なノードを起動，それらの状況に対応する行動をさせるプログラムです．（PCLによる三次元障害物の検出・回避機能の作成中です．）
+ゴールを目指しながら各経由地を巡回し，予め指定した交差点・探索エリアで必要なノードを起動，それらの状況に対応する行動をさせるプログラムです．（PCLによる歩道と車道の区別や三次元障害物の検出・回避機能の作成中です．）
 
 
 
@@ -31,7 +31,7 @@ https://user-images.githubusercontent.com/73274492/120099497-af859100-c176-11eb-
 
 
 
-
+機能の呼び出しの概略図  
 <img width="271" alt="2021-03-01 (1)" src="https://user-images.githubusercontent.com/73274492/109474570-00beaf80-7ab8-11eb-995d-d6e1e00171c0.png"><img width="172" alt="2021-03-01" src="https://user-images.githubusercontent.com/73274492/109474914-5b580b80-7ab8-11eb-856d-1d19a7ebc8bf.png">
 
 
@@ -39,6 +39,8 @@ Crossroad1/2(交差点1/2)の入力
 DetectArea（物体検出エリア）の入力  
 ![図1](https://user-images.githubusercontent.com/73274492/120101653-093f8880-c182-11eb-9b1e-4c6170b94c66.png)
 
+
+状態の移行  
 ![1](https://user-images.githubusercontent.com/73274492/120101584-aea62c80-c181-11eb-858f-e407c06563d8.png)
 
 
