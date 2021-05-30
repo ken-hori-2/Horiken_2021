@@ -1,6 +1,0 @@
-<launch>
-    
-    <node pkg="ros_beginner" name="demo" type="DEMO.py" output="screen"/> <!---->
-    <node pkg="ros_beginner" name="wp" type="WP.py" /> <!--output="screen"-->
-
-</launch>
