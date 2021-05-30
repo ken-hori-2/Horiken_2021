@@ -6,26 +6,39 @@
 
  
 # DEMO
-自律移動中の信号認識
-
-
+動的環境での障害物回避
 https://user-images.githubusercontent.com/73274492/120099695-df816400-c177-11eb-8ee5-2986dd2176b9.mp4
 
 
+
+
+csvファイル/actionlibを用いた複数目的地(waypoint)の巡回
 https://user-images.githubusercontent.com/73274492/120099311-ba8bf180-c175-11eb-9e3c-b4f3d039daeb.mp4
 
 
+
+長距離走行
 https://user-images.githubusercontent.com/73274492/120099565-186d0900-c177-11eb-8936-1bdf1f128073.mp4
 
 
+
+実環境を想定した自律移動中の信号認識/物体探索
 https://user-images.githubusercontent.com/73274492/120099497-af859100-c176-11eb-9463-85854a33fd8c.mp4
 
 
 
-自律移動中の物体探索
+
 
 
 <img width="271" alt="2021-03-01 (1)" src="https://user-images.githubusercontent.com/73274492/109474570-00beaf80-7ab8-11eb-995d-d6e1e00171c0.png"><img width="172" alt="2021-03-01" src="https://user-images.githubusercontent.com/73274492/109474914-5b580b80-7ab8-11eb-856d-1d19a7ebc8bf.png">
+
+
+Crossroad1/2(交差点1/2)の入力
+DetectArea（物体検出エリア）の入力
+![図1](https://user-images.githubusercontent.com/73274492/120101653-093f8880-c182-11eb-9b1e-4c6170b94c66.png)
+
+![1](https://user-images.githubusercontent.com/73274492/120101584-aea62c80-c181-11eb-858f-e407c06563d8.png)
+
 
 
 
