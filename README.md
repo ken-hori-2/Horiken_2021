@@ -139,9 +139,9 @@ rosrun ros_beginner sm.py
 rosrun smach_viewer smach_viewer.py
 
 PF1 つくばチャレンジ シミュレーション/地図あり
-roslaunch PF1 PF1_final_amcl.launch
-roslaunch PF1 diff_drive_amcl.launch
-roslaunch PF1 PF1_final.launch 
+roslaunch PF1_tukuba PF1_final_amcl.launch
+roslaunch PF1_tukuba diff_drive_amcl.launch
+roslaunch PF1_tukuba PF1_final.launch 
 ```
  
 # Note
