@@ -1,0 +1,5 @@
+footprint: [[-0.4, -0.325], [-0.4, 0.325], [0.4, 0.325], [0.4, -0.325]]
+#robot_radius: 0.105
+
+inflation_radius: 1.6
+cost_scaling_factor: 3.0

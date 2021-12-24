@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+<!-- <arg name="model" default="$(find PF1)/xacro/mighty.xacro"/> -->
+<arg name="model" default="$(find PF1)/xacro/xxx_fixed2_mass_copy.xacro"/>
+<!-- <arg name="model" default="$(find PF1)/xacro/pf1.xacro"/> -->
+<!-- <arg name="rvizconfig" default="$(find urdf_tutorial)/rviz/urdf.rviz"/> -->
+<!-- <arg name="open_rviz" default="true"/>
+<group if="$(arg open_rviz)"> 
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find turtlebot3_navigation)/rviz/mighty_navigation.rviz"/>
+  </group> -->
+  <!-- <arg name="rvizconfig" default="$(find turtlebot3_navigation)/rviz/mighty_navigation.rviz"/> -->
+  <arg name="rvizconfig" default="$(find urdf_tutorial)/rviz/pf1_amcl.rviz"/>
+
+
+<arg name="robot_name" default="PF1"/>
+  <arg name="enable_odom_tf" default="false"/>
+  <arg name="init_pose" default=""/>
+
+<!--<group ns="$(arg model)">-->
+
+
+<!-- Launch gazebo -->
+<include file="$(find PF1)/launch/xxx.launch">
+  <arg name="model" value="$(arg model)"/>
+ </include>
+
+<!-- rviz -->
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)"/>
+
+<!-- Load joint controller configuration from YAML file to parameter server -->
+
+<rosparam file="$(find PF1)/config/joint_states.yaml" command="load"/>
+
+<rosparam file="$(find PF1)/config/diff_drive_pf1.yaml" command="load"/>
+
+
+
+<!-- load the controllers -->
+<param name="diff_drive_controller/enable_odom_tf" value="$(arg enable_odom_tf)" />
+    <param name="diff_drive_controller/base_frame_id" value="base_link" />
+    <param name="diff_drive_controller/odom_frame_id" value="odom" />
+<!--<param name="/$(arg model)/diff_drive_controller/imu_frame_id" value="$(arg model)/imu_link" />-->
+
+<node name="robot_arm_controller_spawner" pkg="controller_manager" type="spawner" respawn="true" output="screen" 
+   args="joint_state_controller
+         diff_drive_controller"/>
+
+<!-- convert joint states to TF transforms for rviz, etc -->
+<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+
+<!--<param name="tf_prefix" value="$(arg robot_name)"/>-->
+
+</node>
+ <!--</group>-->
+
+
+<!-- steering -->
+<node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
+  <param name="default_topic" value="diff_drive_controller/cmd_vel"/> 
+</node>
+
+<!--<group ns="Diff_Drive">-->
+    <!-- to increase the wheel odometry error -->
+    <param name="diff_drive_controller/wheel_radius" value="0.1" />
+    <!-- robot localization -->
+
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se" clear_params="true" output="screen">
+      <rosparam command="load" file="$(find PF1)/config/ekf_localization/mode1.yaml" />
+      <!--<param name="tf_prefix" value="mighty1"/>-->
+      <remap from="/odometry/filtered" to="odom" />
+      <remap from="odom0" to="diff_drive_controller/odom" />
+      <remap from="imu0"  to="imu/data" />
+    </node> 
+
+
+<!-- <node pkg="tf" type="static_transform_publisher" name="front_lidar_to_laser" args="0.25 0.0 0.0 0.0 0.0 0.0 /base_link /front_lidar 40"/> -->
+
+
+    <!-- gmapping -->
+    <!--<node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" clear_params="true">
+      <rosparam command="load" file="$(find PF1)/config/gmapping.yaml" />
+      <remap from="scan" to="scan" />
+      <param name="base_frame" value="base_link" />
+      <param name="odom_frame" value="odom" />
+      <param name="map_frame"  value="map" />
+    </node>-->
+
+
+
+    <!-- <arg name="map_file" default="$(find PF1)/map/pf1_xxx2_map.yaml"/> -->
+    <!-- <arg name="map_file" default="$(find PF1)/map/test_pf1_map2.yaml"/> -->
+    <arg name="map_file" default="$(find PF1)/map/test_pf1_map2.yaml"/>  <!--simple-->
+
+    <!-- Map server -->
+  <!-- <node pkg="map_server" name="map_server" type="map_server" args="$(find turtlebot3_navigation)/maps/$(arg map_file)"/> -->
+  <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+
+    <!-- AMCL -->
+  <include file="$(find turtlebot3_navigation)/launch/pf1_amcl.launch"/>
+  <!-- <include file="$(find turtlebot3_navigation)/launch/piezo_amcl.launch"/> -->
+
+    <!-- move_base 
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+      <rosparam file="$(find PF1)/config/move_base/local_costmap_params_old.yaml" command="load" />
+      <rosparam file="$(find PF1)/config/move_base/move_base_params.yaml" command="load" />
+      <rosparam file="$(find PF1)/config/move_base/global_costmap_params_old.yaml" command="load" />
+      <rosparam file="$(find PF1)/config/move_base/global2_costmap_params.yaml" command="load" />
+
+
+      <rosparam file="$(find PF1)/config/move_base/base_local_planner_params.yaml" command="load" />
+
+      
+      <rosparam file="$(find PF1)/config/move_base/dwa_local_planner_params.yaml" command="load" /-->
+    
+
+    <!-- move_base -->
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+      <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+      <rosparam file="$(find PF1)/config/move_base/c2.yaml" command="load" ns="global_costmap" />
+      <rosparam file="$(find PF1)/config/move_base/c2.yaml" command="load" ns="local_costmap" />
+      <rosparam file="$(find PF1)/config/move_base/l2.yaml" command="load" />
+      <rosparam file="$(find PF1)/config/move_base/g2.yaml" command="load" />
+      <rosparam file="$(find PF1)/config/move_base/m.yaml" command="load" />
+      <rosparam file="$(find PF1)/config/move_base/dwa.yaml" command="load" />
+      <!-- <rosparam file="$(find PF1)/config/move_base/c_piezo.yaml" command="load" ns="global_costmap" />
+      <rosparam file="$(find PF1)/config/move_base/c_piezo.yaml" command="load" ns="local_costmap" />
+      <rosparam file="$(find PF1)/config/move_base/l_piezo.yaml" command="load" />
+      <rosparam file="$(find PF1)/config/move_base/g_piezo.yaml" command="load" />
+      <rosparam file="$(find PF1)/config/move_base/m_piezo.yaml" command="load" />
+      <rosparam file="$(find PF1)/config/move_base/dwa_piezo.yaml" command="load" /> -->
+
+
+
+
+      <param name="global_costmap/global_frame" value="map" />
+      <param name="global_costmap/robot_base_frame" value="base_link" />
+      <param name="local_costmap/laser_scan_sensor/sensor_frame" value="front_lidar" />
+      <!-- <param name="local_costmap/laser_scan_sensor/sensor_frame" value="base_sensor" /> -->
+      <param name="local_costmap/laser_scan_sensor/topic" value="scan" />
+      <param name="local_costmap/global_frame" value="odom" />
+      <param name="local_costmap/robot_base_frame" value="base_link" />
+      <remap from="cmd_vel" to="diff_drive_controller/cmd_vel" />
+      <remap from="odom" to="diff_drive_controller/odom" />
+    </node>
+-->
+ <!--</group>-->
+
+</launch>
+
+ 
+
+
