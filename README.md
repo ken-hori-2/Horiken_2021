@@ -1,18 +1,28 @@
 # Horiken_2021
 
+#DEMO(summary)
+
 ゴールを目指しながら各経由地を巡回し，予め指定した交差点・探索エリアで必要なノードを起動，それらの状況に対応する行動をさせるプログラムです．（PCLによる歩道と車道の区別や三次元障害物の検出・回避機能の作成中です．）
 
 
+https://user-images.githubusercontent.com/73274492/147322778-e60b61c8-b9f0-4158-bf63-67a393f461ea.mp4
+![image](https://user-images.githubusercontent.com/73274492/147322845-ed88291e-90a8-41ea-bb45-aed94761cca4.png)
 
- 
-# DEMO
+<img width="1102" alt="スクリーンショット 2021-12-24 15 04 02" src="https://user-images.githubusercontent.com/73274492/147323019-547ab20b-1208-49ae-aaec-b1865368bb81.png">
+
+
+https://user-images.githubusercontent.com/73274492/147323239-27b9b485-d4db-4376-99de-3351ca54aeb8.mp4
+
+
+
+https://user-images.githubusercontent.com/73274492/147323887-36a394b9-4178-4cbd-ba43-bb70cfa39663.mp4
+
+
+# DEMO(specific measures)
 1.動的環境での障害物回避  
 2.csvファイル/actionlibを用いた複数目的地(waypoint)の巡回  
 3.長距離走行  
 4.実環境を想定した自律移動中の信号認識/物体探索  
-
-
-
 
 
 
