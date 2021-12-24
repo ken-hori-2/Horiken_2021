@@ -10,7 +10,7 @@
 https://user-images.githubusercontent.com/73274492/147322778-e60b61c8-b9f0-4158-bf63-67a393f461ea.mp4
 
 # DEMO_sim
-つくばチャレンジ(自律移動ロボットの会場)を模した　Gazebo(シミュレーター環境)での実行
+つくばチャレンジ(自律移動ロボットの大会会場)を模した　Gazebo(シミュレーター環境)での実行
 
 ![image](https://user-images.githubusercontent.com/73274492/147322845-ed88291e-90a8-41ea-bb45-aed94761cca4.png)
 
