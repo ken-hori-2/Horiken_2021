@@ -1,11 +1,12 @@
 # Horiken_2021
 
-# DEMO(summary)
+# Summary
 
 ゴールを目指しながら各経由地を巡回し，予め指定した交差点・探索エリアで必要なノードを起動，それらの状況に対応する行動をさせるプログラムです．（PCLによる歩道と車道の区別や三次元障害物の検出・回避機能の作成中です．）
 
 # DEMO_real
 シミュレーションでの実験から実機への移植
+
 https://user-images.githubusercontent.com/73274492/147322778-e60b61c8-b9f0-4158-bf63-67a393f461ea.mp4
 
 # DEMO_sim
