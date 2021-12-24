@@ -4,8 +4,12 @@
 
 ゴールを目指しながら各経由地を巡回し，予め指定した交差点・探索エリアで必要なノードを起動，それらの状況に対応する行動をさせるプログラムです．（PCLによる歩道と車道の区別や三次元障害物の検出・回避機能の作成中です．）
 
-
+#DEMO_real
+シミュレーションでの実験から実機への移植
 https://user-images.githubusercontent.com/73274492/147322778-e60b61c8-b9f0-4158-bf63-67a393f461ea.mp4
+
+#DEMO_sim
+つくばチャレンジ(自律移動ロボットの会場)を模した　Gazebo　でのシミュレーター環境での実行
 
 ![image](https://user-images.githubusercontent.com/73274492/147322845-ed88291e-90a8-41ea-bb45-aed94761cca4.png)
 
@@ -19,7 +23,7 @@ https://user-images.githubusercontent.com/73274492/147323239-27b9b485-d4db-4376-
 https://user-images.githubusercontent.com/73274492/147323887-36a394b9-4178-4cbd-ba43-bb70cfa39663.mp4
 
 
-# DEMO(specific measures)
+# DEMO_sim(specific measures)
 1.動的環境での障害物回避  
 2.csvファイル/actionlibを用いた複数目的地(waypoint)の巡回  
 3.長距離走行  
