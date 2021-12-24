@@ -7,9 +7,11 @@
 # DEMO_real
 シミュレーションでの実験から実機への移植
 Waypoint走行による巡回
+
 https://user-images.githubusercontent.com/73274492/147322778-e60b61c8-b9f0-4158-bf63-67a393f461ea.mp4
 
 画像認識による人物追従
+
 https://user-images.githubusercontent.com/73274492/147325718-6d3a2067-7f2d-4407-975c-6c68806a974c.mp4
 
 
