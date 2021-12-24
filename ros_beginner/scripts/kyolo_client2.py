@@ -9,7 +9,7 @@ def call():
     rospy.wait_for_service('bbox2')
     try:
         
-        service = rospy.ServiceProxy('bbox2', Kyolo2)
+        #service = rospy.ServiceProxy('bbox2', Kyolo2)
         
 
         response = service() #client -> server -> client

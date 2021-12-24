@@ -81,7 +81,7 @@ class Action(object):
                     rospy.loginfo(self._x)
                     #rospy.loginfo(box.xmax)
                     Velocity=(((4.00-(((self._box.xmin + self._box.xmax)*0.01)/2))/2)*0.25*math.pi)
-                    if self._box.Class == "bottle":
+                    if self._box.Class == "person":#"bottle":  #person
                         #rospy.loginfo("found_angular!!")
                         self._vel.angular.z = Velocity
                         self._vel_pub.publish(self._vel)            #2
@@ -90,7 +90,7 @@ class Action(object):
                         self._vel_pub.publish(self._vel)    #####----ADD----####
                         
                     Width=(self._box.xmax-self._box.xmin)
-                    if self._box.Class == "bottle":
+                    if self._box.Class == "person":#"bottle":  #person
                         if Width < 200:
                             #rospy.loginfo("forward!!")
                             self._vel.linear.x = 0.1
