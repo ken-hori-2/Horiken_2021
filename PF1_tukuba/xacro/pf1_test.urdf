@@ -1,0 +1,580 @@
+<?xml version="1.0"?>
+<robot name="test_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  
+
+  <material name="base_link">
+    <color rgba="0.95 0.95 1.0 1.0"/>
+  </material>
+  <material name="frame">
+    <color rgba="0.5 0.5 0.5 1.0"/>
+  </material>
+  <material name="gear">
+    <color rgba="0.0 0.4 1.0 1.0"/>
+  </material>
+  <material name="motor">
+    <color rgba="0.3 0.3 0.3 1.0"/>
+  </material>
+  <material name="wheel">
+    <color rgba="0.15 0.15 0.15 1.0"/>
+  </material>
+  <material name="realsense">
+    <color rgba="0.0 0.0 0.0 1.0"/>
+  </material>
+
+
+
+    <!-- base_footprint-->
+  <link name="base_footprint"/>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0.0 0.0 0.47" rpy="0 0 0"/>
+  </joint>
+
+
+
+    <!-- base_link -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.45 0.39 0.2"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="base_link"/>
+    </visual>
+  </link>
+
+
+    <!-- imu_link -->
+  <joint name="imu_link_to_base_link" type="fixed">
+    <parent link="base_link"/>
+    <child link="imu_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="imu_link">
+    <visual>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="0.01" radius="0.005"/>
+      </geometry>
+      <material name="realsense"/>
+    </visual>
+  </link>
+
+
+
+   <xacro:include filename="$(find realsense2_description)/urdf/_d435.gazebo.xacro"/>
+
+  <!--xacro:macro name="sensor_d435" params="name:=camera topics_ns:=camera parent *origin publish_pointcloud:=true"-->
+    <xacro:property name="M_PI" value="3.1415926535897931" />
+  
+    <!-- The following values are approximate, and the camera node
+     publishing TF values with actual calibrated camera extrinsic values -->
+    <xacro:property name="d435_cam_depth_to_left_ir_offset" value="0.0"/>
+    <xacro:property name="d435_cam_depth_to_right_ir_offset" value="-0.050"/>
+    <xacro:property name="d435_cam_depth_to_color_offset" value="0.015"/>
+  
+    <!-- The following values model the aluminum peripherial case for the
+    D435 camera, with the camera joint represented by the actual 
+    peripherial camera tripod mount -->
+    <xacro:property name="d435_cam_width" value="0.090"/>
+    <xacro:property name="d435_cam_height" value="0.025"/>
+    <xacro:property name="d435_cam_depth" value="0.02505"/>
+    <xacro:property name="d435_cam_mount_from_center_offset" value="0.0149"/> <!--0.0149-->
+  
+    <!-- The following offset is relative the the physical D435 camera peripherial
+    camera tripod mount -->
+    <xacro:property name="d435_cam_depth_px" value="${d435_cam_mount_from_center_offset}"/>
+    <xacro:property name="d435_cam_depth_py" value="0.0175"/>
+    <xacro:property name="d435_cam_depth_pz" value="${d435_cam_height/2}"/>
+
+    <material name="camera_aluminum">
+    <color rgba="0.5 0.5 0.5 1"/>
+    </material>
+
+
+    <!-- camera body, with origin at bottom screw mount -->
+
+    <xacro:property name="origin" xyz="0 0 0" rpy="0 0 0" />
+
+    <joint name="camera_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="base_link"/>
+      <child link="camera_bottom_screw_frame" />
+    </joint>
+    <link name="camera_bottom_screw_frame"/>
+
+    <joint name="camera_link_joint" type="fixed">
+      <origin xyz="0.08 ${d435_cam_depth_py} 0.055" rpy="0 0 0"/>
+      <parent link="camera_bottom_screw_frame"/>
+      <child link="camera_link" />
+    </joint>
+
+    <link name="camera_link">
+      <visual>
+      <origin xyz="${d435_cam_mount_from_center_offset*11} ${-d435_cam_depth_py} 0" rpy="${M_PI/2} 0 ${M_PI/2}"/>
+        <geometry>
+          <!-- <box size="${d435_cam_width} ${d435_cam_height} ${d435_cam_depth}"/> -->
+          <mesh filename="package://realsense2_description/meshes/d435.dae" />
+          <!--<mesh filename="package://realsense2_description/meshes/d435/d435.dae" />-->
+        </geometry>
+        <material name="camera_aluminum"/>
+      </visual>
+      <collision>
+        <origin xyz="0 ${-d435_cam_depth_py} 0" rpy="0 0 0"/>
+        <geometry>
+        <box size="${d435_cam_depth} ${d435_cam_width} ${d435_cam_height}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <!-- The following are not reliable values, and should not be used for modeling -->
+        <mass value="0.564" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="0.003881243" ixy="0.0" ixz="0.0" iyy="0.000498940" iyz="0.0" izz="0.003879257" />
+      </inertial>
+    </link>
+   
+    <!-- camera depth joints and links -->
+    <joint name="camera_depth_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="camera_link"/>
+      <child link="camera_depth_frame" />
+    </joint>
+    <link name="camera_depth_frame"/>
+
+    <joint name="camera_depth_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+      <parent link="camera_depth_frame" />
+      <child link="camera_depth_optical_frame" />
+    </joint>
+    <link name="camera_depth_optical_frame"/>
+      
+    <!-- camera left IR joints and links -->
+    <joint name="camera_left_ir_joint" type="fixed">
+      <origin xyz="0 ${d435_cam_depth_to_left_ir_offset} 0" rpy="0 0 0" />
+      <parent link="camera_depth_frame" />
+      <child link="camera_left_ir_frame" />
+    </joint>
+    <link name="camera_left_ir_frame"/>
+
+    <joint name="camera_left_ir_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+      <parent link="camera_left_ir_frame" />
+      <child link="camera_left_ir_optical_frame" />
+    </joint>
+    <link name="camera_left_ir_optical_frame"/>
+
+    <!-- camera right IR joints and links -->
+    <joint name="camera_right_ir_joint" type="fixed">
+      <origin xyz="0 ${d435_cam_depth_to_right_ir_offset} 0" rpy="0 0 0" />
+      <parent link="camera_depth_frame" />
+      <child link="camera_right_ir_frame" />
+    </joint>
+    <link name="camera_right_ir_frame"/>
+
+    <joint name="camera_right_ir_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+      <parent link="camera_right_ir_frame" />
+      <child link="camera_right_ir_optical_frame" />
+    </joint>
+    <link name="camera_right_ir_optical_frame"/>
+
+    <!-- camera color joints and links -->
+    <joint name="camera_color_joint" type="fixed">
+      <origin xyz="0 ${d435_cam_depth_to_color_offset} 0" rpy="0 0 0" />
+      <parent link="camera_depth_frame" />
+      <child link="camera_color_frame" />
+    </joint>
+    <link name="camera_color_frame"/>
+
+    <joint name="camera_color_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+      <parent link="camera_color_frame" />
+      <child link="camera_color_optical_frame" />
+    </joint>
+    <link name="camera_color_optical_frame"/>
+    <!-- leg_fl -->
+  <joint name="frame1_fl_to_base_link" type="fixed">
+    <parent link="base_link"/>
+    <child  link="frame1_fl"/>
+    <origin xyz="0 0.14 -0.1" rpy="0 0 0"/>
+  </joint>
+  <link name="frame1_fl">
+    <visual>
+      <geometry>
+        <box size="0.27 0.02 0.09"/>
+      </geometry>
+      <origin xyz="0.135 0 0" rpy="0 0 0"/>
+      <material name="frame"/>
+    </visual>
+  </link>
+
+  <joint name="frame2_fl_to_frame1_fl" type="fixed">
+    <parent link="frame1_fl"/>
+    <child  link="frame2_fl"/>
+    <origin xyz="0.23 0.02 -0.045" rpy="0 0 0"/>
+  </joint>
+  <link name="frame2_fl">
+    <visual>
+      <geometry>
+        <box size="0.08 0.02 0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="frame"/>
+    </visual>
+  </link>
+
+  <joint name="gear_fl_to_frame2_fl" type="fixed">
+    <parent link="frame2_fl"/>
+    <child  link="gear_fl"/>
+    <origin xyz="0 0.035 -0.06" rpy="0 0 0"/>
+  </joint>
+  <link name="gear_fl">
+    <visual>
+      <geometry>
+        <box size="0.075 0.09 0.07"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="gear"/>
+    </visual>
+  </link>
+
+  <joint name="frame3_fl_to_gear_fl" type="revolute">
+    <parent link="gear_fl"/>
+    <child  link="frame3_fl"/>
+    <axis xyz="0 0 1"/>
+    <origin xyz="0 0 -0.08" rpy="0 0 0"/>
+    <limit lower="-3.1415" upper="3.1415" effort="0" velocity="0"/>
+  </joint>
+  <link name="frame3_fl">
+    <visual>
+      <geometry>
+        <box size="0.075 0.09 0.09"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="frame"/>
+    </visual>
+  </link>
+
+  <joint name="motor_fl_to_frame3_fl" type="fixed">
+    <parent link="frame3_fl"/>
+    <child  link="motor_fl"/>
+    <origin xyz="0 -0.02 -0.09" rpy="0 0 0"/>
+  </joint>
+  <link name="motor_fl">
+    <visual>
+      <geometry>
+        <box size="0.075 0.09 0.09"/>
+      </geometry>
+      <material name="motor"/>
+    </visual>
+  </link>
+
+  <joint name="wheel_fl_to_motor_fl" type="revolute">
+    <parent link="motor_fl"/>
+    <child  link="wheel_fl"/>
+    <origin xyz="0 0.09 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-3.1415" upper="3.1415" effort="0" velocity="0"/>
+  </joint>
+  <link name="wheel_fl">
+    <visual>
+      <geometry>
+        <cylinder length="0.09" radius="0.1"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.57 0 0"/>
+      <material name="wheel"/>
+    </visual>
+  </link>
+
+
+
+      <!-- leg_bl : mirror leg_fl to the y axis -->
+  <joint name="frame1_bl_to_base_link" type="fixed">
+    <parent link="base_link"/>
+    <child  link="frame1_bl"/>
+    <origin xyz="0 0.14 -0.1" rpy="0 0 0"/>
+  </joint>
+  <link name="frame1_bl">
+    <visual>
+      <geometry>
+        <box size="0.27 0.02 0.09"/>
+      </geometry>
+      <origin xyz="-0.135 0 0" rpy="0 0 0"/>
+      <material name="frame"/>
+    </visual>
+  </link>
+
+  <joint name="frame2_bl_to_frame1_bl" type="fixed">
+    <parent link="frame1_bl"/>
+    <child  link="frame2_bl"/>
+    <origin xyz="-0.23 0.02 -0.045" rpy="0 0 0"/>
+  </joint>
+  <link name="frame2_bl">
+    <visual>
+      <geometry>
+        <box size="0.08 0.02 0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="frame"/>
+    </visual>
+  </link>
+
+  <joint name="gear_bl_to_frame2_bl" type="fixed">
+    <parent link="frame2_bl"/>
+    <child  link="gear_bl"/>
+    <origin xyz="0 0.035 -0.06" rpy="0 0 0"/>
+  </joint>
+  <link name="gear_bl">
+    <visual>
+      <geometry>
+        <box size="0.075 0.09 0.07"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="gear"/>
+    </visual>
+  </link>
+
+  <joint name="frame3_bl_to_gear_bl" type="revolute">
+    <parent link="gear_bl"/>
+    <child  link="frame3_bl"/>
+    <axis xyz="0 0 1"/>
+    <origin xyz="0 0 -0.08" rpy="0 0 0"/>
+    <limit lower="-3.1415" upper="3.1415" effort="0" velocity="0"/>
+  </joint>
+  <link name="frame3_bl">
+    <visual>
+      <geometry>
+        <box size="0.075 0.09 0.09"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="frame"/>
+    </visual>
+  </link>
+
+  <joint name="motor_bl_to_frame3_bl" type="fixed">
+    <parent link="frame3_bl"/>
+    <child  link="motor_bl"/>
+    <origin xyz="0 -0.02 -0.09" rpy="0 0 0"/>
+  </joint>
+  <link name="motor_bl">
+    <visual>
+      <geometry>
+        <box size="0.075 0.09 0.09"/>
+      </geometry>
+      <material name="motor"/>
+    </visual>
+  </link>
+
+  <joint name="wheel_bl_to_motor_bl" type="revolute">
+    <parent link="motor_bl"/>
+    <child  link="wheel_bl"/>
+    <origin xyz="0 0.09 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-3.1415" upper="3.1415" effort="0" velocity="0"/>
+  </joint>
+  <link name="wheel_bl">
+    <visual>
+      <geometry>
+        <cylinder length="0.09" radius="0.1"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.57 0 0"/>
+      <material name="wheel"/>
+    </visual>
+  </link>
+
+
+
+    <!-- leg_fr -->
+  <joint name="frame1_fr_to_base_link" type="fixed">
+    <parent link="base_link"/>
+    <child  link="frame1_fr"/>
+    <origin xyz="0 -0.14 -0.1" rpy="0 0 0"/>
+  </joint>
+  <link name="frame1_fr">
+    <visual>
+      <geometry>
+        <box size="0.27 0.02 0.09"/>
+      </geometry>
+      <origin xyz="0.135 0 0" rpy="0 0 0"/>
+      <material name="frame"/>
+    </visual>
+  </link>
+
+  <joint name="frame2_fr_to_frame1_fr" type="fixed">
+    <parent link="frame1_fr"/>
+    <child  link="frame2_fr"/>
+    <origin xyz="0.23 -0.02 -0.045" rpy="0 0 0"/>
+  </joint>
+  <link name="frame2_fr">
+    <visual>
+      <geometry>
+        <box size="0.08 0.02 0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="frame"/>
+    </visual>
+  </link>
+
+  <joint name="gear_fr_to_frame2_fr" type="fixed">
+    <parent link="frame2_fr"/>
+    <child  link="gear_fr"/>
+    <origin xyz="0 -0.035 -0.06" rpy="0 0 0"/>
+  </joint>
+  <link name="gear_fr">
+    <visual>
+      <geometry>
+        <box size="0.075 0.09 0.07"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="gear"/>
+    </visual>
+  </link>
+
+  <joint name="frame3_fr_to_gear_fr" type="revolute">
+    <parent link="gear_fr"/>
+    <child  link="frame3_fr"/>
+    <axis xyz="0 0 1"/>
+    <origin xyz="0 0 -0.08" rpy="0 0 0"/>
+    <limit lower="-3.1415" upper="3.1415" effort="0" velocity="0"/>
+  </joint>
+  <link name="frame3_fr">
+    <visual>
+      <geometry>
+        <box size="0.075 0.09 0.09"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="frame"/>
+    </visual>
+  </link>
+
+  <joint name="motor_fr_to_frame3_fr" type="fixed">
+    <parent link="frame3_fr"/>
+    <child  link="motor_fr"/>
+    <origin xyz="0 0.02 -0.09" rpy="0 0 0"/>
+  </joint>
+  <link name="motor_fr">
+    <visual>
+      <geometry>
+        <box size="0.075 0.09 0.09"/>
+      </geometry>
+      <material name="motor"/>
+    </visual>
+  </link>
+
+  <joint name="wheel_fr_to_motor_fr" type="revolute">
+    <parent link="motor_fr"/>
+    <child  link="wheel_fr"/>
+    <origin xyz="0 -0.09 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-3.1415" upper="3.1415" effort="0" velocity="0"/>
+  </joint>
+  <link name="wheel_fr">
+    <visual>
+      <geometry>
+        <cylinder length="0.09" radius="0.1"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.57 0 0"/>
+      <material name="wheel"/>
+    </visual>
+  </link>
+
+
+
+    <!-- leg_br -->
+  <joint name="frame1_br_to_base_link" type="fixed">
+    <parent link="base_link"/>
+    <child  link="frame1_br"/>
+    <origin xyz="0 -0.14 -0.1" rpy="0 0 0"/>
+  </joint>
+  <link name="frame1_br">
+    <visual>
+      <geometry>
+        <box size="0.27 0.02 0.09"/>
+      </geometry>
+      <origin xyz="-0.135 0 0" rpy="0 0 0"/>
+      <material name="frame"/>
+    </visual>
+  </link>
+
+  <joint name="frame2_br_to_frame1_br" type="fixed">
+    <parent link="frame1_br"/>
+    <child  link="frame2_br"/>
+    <origin xyz="-0.23 -0.02 -0.045" rpy="0 0 0"/>
+  </joint>
+  <link name="frame2_br">
+    <visual>
+      <geometry>
+        <box size="0.08 0.02 0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="frame"/>
+    </visual>
+  </link>
+
+  <joint name="gear_br_to_frame2_br" type="fixed">
+    <parent link="frame2_br"/>
+    <child  link="gear_br"/>
+    <origin xyz="0 -0.035 -0.06" rpy="0 0 0"/>
+  </joint>
+  <link name="gear_br">
+    <visual>
+      <geometry>
+        <box size="0.075 0.09 0.07"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="gear"/>
+    </visual>
+  </link>
+
+  <joint name="frame3_br_to_gear_br" type="revolute">
+    <parent link="gear_br"/>
+    <child  link="frame3_br"/>
+    <axis xyz="0 0 1"/>
+    <origin xyz="0 0 -0.08" rpy="0 0 0"/>
+    <limit lower="-3.1415" upper="3.1415" effort="0" velocity="0"/>
+  </joint>
+  <link name="frame3_br">
+    <visual>
+      <geometry>
+        <box size="0.075 0.09 0.09"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="frame"/>
+    </visual>
+  </link>
+
+  <joint name="motor_br_to_frame3_br" type="fixed">
+    <parent link="frame3_br"/>
+    <child  link="motor_br"/>
+    <origin xyz="0 0.02 -0.09" rpy="0 0 0"/>
+  </joint>
+  <link name="motor_br">
+    <visual>
+      <geometry>
+        <box size="0.075 0.09 0.09"/>
+      </geometry>
+      <material name="motor"/>
+    </visual>
+  </link>
+
+  <joint name="wheel_br_to_motor_br" type="revolute">
+    <parent link="motor_br"/>
+    <child  link="wheel_br"/>
+    <origin xyz="0 -0.09 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-3.1415" upper="3.1415" effort="0" velocity="0"/>
+  </joint>
+  <link name="wheel_br">
+    <visual>
+      <geometry>
+        <cylinder length="0.09" radius="0.1"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.57 0 0"/>
+      <material name="wheel"/>
+    </visual>
+  </link>
+</robot>
+
