@@ -56,6 +56,7 @@ https://user-images.githubusercontent.com/73274492/120099565-186d0900-c177-11eb-
 https://user-images.githubusercontent.com/73274492/120099497-af859100-c176-11eb-9463-85854a33fd8c.mp4
 
 # 不明領域探索
+まだ未観測のエリアを検出し、そのエリアに向けてゴールポイントを設定して走行することを繰り返し、地図を作成していくというものです。
 
 https://user-images.githubusercontent.com/73274492/148637725-3db7d6d2-9532-4c87-b386-225e981b81a5.mp4
 
