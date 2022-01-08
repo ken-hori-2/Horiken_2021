@@ -49,6 +49,8 @@ https://user-images.githubusercontent.com/73274492/120099565-186d0900-c177-11eb-
 
 https://user-images.githubusercontent.com/73274492/120099497-af859100-c176-11eb-9463-85854a33fd8c.mp4
 
+# 不明領域探索
+
 
 
 
@@ -143,7 +145,10 @@ rosrun smach_viewer smach_viewer.py
 PF1 つくばチャレンジ シミュレーション/地図あり
 roslaunch PF1_tukuba PF1_final_amcl.launch
 roslaunch PF1_tukuba diff_drive_amcl.launch
-roslaunch PF1_tukuba PF1_final.launch 
+roslaunch PF1_tukuba PF1_final.launch
+
+不明領域探索（地図無し）
+roslaunch PF1 explore_lite.launch
 ```
  
 # Note
